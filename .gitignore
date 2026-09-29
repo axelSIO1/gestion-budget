@@ -1,0 +1,19 @@
+# Java / Maven
+target/
+*.class
+*.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Environnement / secrets
+.env
+application-local.properties
+
+# Frontend (si node est utilisé plus tard)
+node_modules/
+
+# Divers
+.DS_Store
