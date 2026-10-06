@@ -13,7 +13,7 @@ public class Transaction {
 
     public Transaction() {}
 
-    public Transaction(int id, double montant, LocalDate date, String description, String type, int idUtilisateur, int idCategorie) {
+    /*public Transaction(int id, double montant, LocalDate date, String description, String type, int idUtilisateur, int idCategorie) {
         this.id = id;
         this.montant = montant;
         this.date = date;
@@ -22,7 +22,7 @@ public class Transaction {
         this.idUtilisateur = idUtilisateur;
         this.idCategorie = idCategorie;
     }
-
+*/
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
