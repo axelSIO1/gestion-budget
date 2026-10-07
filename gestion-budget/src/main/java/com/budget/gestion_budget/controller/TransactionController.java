@@ -5,6 +5,9 @@ import com.budget.gestion_budget.model.Transaction;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -26,6 +29,7 @@ public class TransactionController {
     public void ajouterTransaction(@RequestBody Transaction transaction) {
         transactionDAO.ajouterTransaction(transaction);
     }
+    
 
     @PutMapping("/{id}")
     public void modifierTransaction(@PathVariable int id, @RequestBody Transaction transaction) {

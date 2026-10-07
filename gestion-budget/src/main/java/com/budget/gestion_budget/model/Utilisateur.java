@@ -8,13 +8,6 @@ public class Utilisateur {
 
     public Utilisateur() {}
 
-    public Utilisateur(int id, String nom, String email, String motPasse) {
-        this.id = id;
-        this.nom = nom;
-        this.email = email;
-        this.motPasse = motPasse;
-    }
-
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
