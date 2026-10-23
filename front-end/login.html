@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>BudgetEtu - Connexion</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>BudgetEtu</h1>
+    <h2>Connexion</h2>
+
+    <form id="formLogin">
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="motPasse" placeholder="Mot de passe" required>
+        <button type="submit">Se connecter</button>
+    </form>
+
+    <p>Pas encore de compte ? <a href="register.html">S'inscrire</a></p>
+    <p id="messageErreur" style="color: red; display: none;">Email ou mot de passe incorrect.</p>
+
+    <script>
+        const API_URL = "http://localhost:8080/api/auth/login";
+
+        document.getElementById("formLogin").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const identifiants = {
+                email: document.getElementById("email").value,
+                motPasse: document.getElementById("motPasse").value
+            };
+
+            const reponse = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(identifiants)
+            });
+
+            if (reponse.status === 200) {
+                const utilisateur = await reponse.json();
+                localStorage.setItem("idUtilisateur", utilisateur.id);
+                localStorage.setItem("nomUtilisateur", utilisateur.nom);
+                window.location.href = "index.html";
+            } else {
+                document.getElementById("messageErreur").style.display = "block";
+            }
+        });
+    </script>
+
+</body>
+</html>

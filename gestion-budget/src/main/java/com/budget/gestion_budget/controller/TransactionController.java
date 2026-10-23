@@ -5,8 +5,6 @@ import com.budget.gestion_budget.model.Transaction;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
@@ -21,13 +19,8 @@ public class TransactionController {
     }
 
     @GetMapping
-    public List<Transaction> getTransactions() {
-        return transactionDAO.listerTransactions();
-    }
-
-    @PostMapping
-    public void ajouterTransaction(@RequestBody Transaction transaction) {
-        transactionDAO.ajouterTransaction(transaction);
+    public List<Transaction> getTransactions(@RequestParam int idUtilisateur) {
+        return transactionDAO.listerTransactionsParUtilisateur(idUtilisateur);
     }
     
 

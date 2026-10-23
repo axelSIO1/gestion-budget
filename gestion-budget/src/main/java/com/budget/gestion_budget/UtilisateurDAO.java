@@ -34,4 +34,9 @@ public class UtilisateurDAO {
         String sql = "SELECT * FROM utilisateur WHERE email = ? AND mot_passe = ?";
         return jdbcTemplate.query(sql, utilisateurRowMapper, email, motPasse);
     }
+
+    public void creerUtilisateur(Utilisateur u) {
+        String sql = "INSERT INTO utilisateur (nom, email, mot_passe) VALUES (?, ?, ?)";
+        jdbcTemplate.update(sql, u.getNom(), u.getEmail(), u.getMotPasse());
+    }
 }

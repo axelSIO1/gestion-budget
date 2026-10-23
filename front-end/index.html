@@ -8,6 +8,21 @@
 <body>
 
     <h1>GpasdeTal</h1>
+    <p>
+        Connecté en tant que <strong id="nomUtilisateur"></strong>
+        <button id="boutonDeconnexion" type="button" onclick="deconnexion()">Se déconnecter</button>
+    </p>
+
+    <h2>Filtres</h2>
+    <div id="filtres">
+        <input type="month" id="filtreMois">
+        <select id="filtreCategorie">
+            <option value="">Toutes les catégories</option>
+        </select>
+        <button id="boutonReinitialiser" type="button">Réinitialiser</button>
+    </div>
+
+    <p>Solde : <strong id="solde">0.00 €</strong></p>
 
     <table id="tableTransactions">
         <thead>
@@ -32,36 +47,99 @@
             <option value="depense">Dépense</option>
             <option value="revenu">Revenu</option>
         </select>
-        <input type="number" id="idCategorie" placeholder="ID Catégorie" required>
+        <select id="idCategorie" required></select>
         <button type="submit">Ajouter</button>
     </form>
 
     <script>
-        const API_URL = "http://localhost:8080/api/transactions";
+        function deconnexion() {
+            localStorage.clear();
+            window.location.href = "login.html";
+        }
 
-        // Récupère et affiche les transactions
+        const API_URL = "http://localhost:8080/api/transactions";
+        const idUtilisateur = localStorage.getItem("idUtilisateur");
+
+        // Pas connecté : retour à la page de connexion
+        if (!idUtilisateur) {
+            window.location.href = "login.html";
+        }
+
+        // Doit correspondre aux id de ta table categorie
+        const CATEGORIES = {
+            1: "Alimentation",
+            2: "Loyer",
+            3: "Loisirs",
+            4: "Salaire",
+            5: "Bourse"
+        };
+
+        let toutesTransactions = [];
+
+        function remplirCategories() {
+            for (const [id, nom] of Object.entries(CATEGORIES)) {
+                document.getElementById("filtreCategorie").add(new Option(nom, id));
+                document.getElementById("idCategorie").add(new Option(nom, id));
+            }
+        }
+
         async function chargerTransactions() {
-            const reponse = await fetch(API_URL);
-            const transactions = await reponse.json();
+            const reponse = await fetch(`${API_URL}?idUtilisateur=${idUtilisateur}`);
+            toutesTransactions = await reponse.json();
+            afficherTransactions();
+        }
+
+        function ajouterCellule(ligne, texte) {
+            const td = document.createElement("td");
+            td.textContent = texte;
+            ligne.appendChild(td);
+            return td;
+        }
+
+        function afficherTransactions() {
+            const mois = document.getElementById("filtreMois").value;           // "2026-10" ou ""
+            const categorie = document.getElementById("filtreCategorie").value; // "3" ou ""
+
+            const filtrees = toutesTransactions.filter(t =>
+                (mois === "" || t.date.startsWith(mois)) &&
+                (categorie === "" || t.idCategorie === parseInt(categorie))
+            );
 
             const corps = document.getElementById("corpsTableau");
             corps.innerHTML = "";
 
-            transactions.forEach(t => {
+            filtrees.forEach(t => {
                 const ligne = document.createElement("tr");
-                ligne.innerHTML = `
-                    <td>${t.date}</td>
-                    <td>${t.description ?? ""}</td>
-                    <td>${t.idCategorie}</td>
-                    <td class="${t.type}">${t.montant.toFixed(2)} €</td>
-                    <td>${t.type}</td>
-                    <td><button onclick="supprimerTransaction(${t.id})">Supprimer</button></td>
-                `;
+                ajouterCellule(ligne, t.date);
+                ajouterCellule(ligne, t.description ?? "");
+                ajouterCellule(ligne, CATEGORIES[t.idCategorie] ?? t.idCategorie);
+                ajouterCellule(ligne, t.montant.toFixed(2) + " €").className = t.type;
+                ajouterCellule(ligne, t.type);
+
+                const celluleAction = document.createElement("td");
+                const bouton = document.createElement("button");
+                bouton.textContent = "Supprimer";
+                bouton.addEventListener("click", () => supprimerTransaction(t.id));
+                celluleAction.appendChild(bouton);
+                ligne.appendChild(celluleAction);
+
                 corps.appendChild(ligne);
             });
+
+            // Solde calculé sur les transactions affichées
+            const solde = filtrees.reduce(
+                (total, t) => t.type === "revenu" ? total + t.montant : total - t.montant, 0
+            );
+            const elementSolde = document.getElementById("solde");
+            elementSolde.textContent = solde.toFixed(2) + " €";
+            elementSolde.className = solde >= 0 ? "revenu" : "depense";
         }
 
-        // Ajoute une transaction
+        async function supprimerTransaction(id) {
+            await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+            chargerTransactions();
+        }
+
         document.getElementById("formAjout").addEventListener("submit", async (e) => {
             e.preventDefault();
 
@@ -70,7 +148,7 @@
                 date: document.getElementById("date").value,
                 description: document.getElementById("description").value,
                 type: document.getElementById("type").value,
-                idUtilisateur: 1,
+                idUtilisateur: parseInt(idUtilisateur),
                 idCategorie: parseInt(document.getElementById("idCategorie").value)
             };
 
@@ -84,15 +162,17 @@
             chargerTransactions();
         });
 
-        // Supprime une transaction
-        async function supprimerTransaction(id) {
-            await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+        document.getElementById("filtreMois").addEventListener("change", afficherTransactions);
+        document.getElementById("filtreCategorie").addEventListener("change", afficherTransactions);
+        document.getElementById("boutonReinitialiser").addEventListener("click", () => {
+            document.getElementById("filtreMois").value = "";
+            document.getElementById("filtreCategorie").value = "";
+            afficherTransactions();
+        });
+
+        if (idUtilisateur) {
+            document.getElementById("nomUtilisateur").textContent = localStorage.getItem("nomUtilisateur");
+            remplirCategories();
             chargerTransactions();
         }
-
-        // Chargement initial
-        chargerTransactions();
     </script>
-
-</body>
-</html>

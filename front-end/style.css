@@ -1,36 +1,131 @@
-body { 
-    font-family: Arial, sans-serif; 
-    max-width: 700px; 
-    margin: 40px auto; 
+:root {
+    --fond: #f4f6fb;
+    --carte: #ffffff;
+    --texte: #1f2937;
+    --texte-discret: #6b7280;
+    --principal: #4f46e5;
+    --principal-fonce: #4338ca;
+    --bordure: #e5e7eb;
+    --vert: #16a34a;
+    --rouge: #dc2626;
 }
 
+* { box-sizing: border-box; }
 
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    margin-top: 20px; 
-}
-        
-th, td { 
-    border: 1px solid #ccc; 
-    padding: 8px; 
-    text-align: left; 
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--fond);
+    color: var(--texte);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+    line-height: 1.5;
 }
 
-th { 
-    background: #f0f0f0; 
+h1 { color: var(--principal); margin-bottom: 4px; }
+h2 { margin-top: 32px; font-size: 1.2rem; }
+a { color: var(--principal); }
+
+/* Pages de connexion / inscription : contenu centré et plus étroit */
+body:has(#formLogin),
+body:has(#formRegister) {
+    max-width: 420px;
+    margin-top: 60px;
 }
-        
-form { 
-    margin-top: 20px; 
-    display: flex; 
-    gap: 8px; 
-    flex-wrap: wrap; 
+
+/* Formulaires et filtres : présentés comme des cartes */
+form, #filtres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: var(--carte);
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
-        
-input, select, button { 
-    padding: 6px; 
+
+#formLogin, #formRegister {
+    flex-direction: column;
 }
-    
-.depense { color: red; }
-.revenu { color: green; }
+
+input, select {
+    padding: 9px 10px;
+    border: 1px solid var(--bordure);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background: #fff;
+}
+
+input:focus, select:focus {
+    outline: 2px solid var(--principal);
+    border-color: transparent;
+}
+
+/* Boutons */
+button {
+    padding: 9px 16px;
+    border: none;
+    border-radius: 6px;
+    background: var(--principal);
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+button:hover { background: var(--principal-fonce); }
+
+#boutonDeconnexion, #boutonReinitialiser {
+    background: #e5e7eb;
+    color: var(--texte);
+}
+
+#boutonDeconnexion:hover, #boutonReinitialiser:hover {
+    background: #d1d5db;
+}
+
+td button {
+    background: var(--rouge);
+    padding: 6px 12px;
+}
+
+td button:hover { background: #b91c1c; }
+
+/* Solde */
+#solde { font-size: 1.4rem; }
+
+/* Tableau */
+table {
+    width: 100%;
+    margin-top: 16px;
+    border-collapse: collapse;
+    background: var(--carte);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+th, td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--bordure);
+}
+
+th {
+    background: var(--principal);
+    color: #fff;
+    font-weight: 600;
+}
+
+tbody tr:hover { background: #f9fafb; }
+
+/* Couleurs revenu / dépense (montant, type et solde) */
+.revenu { color: var(--vert); font-weight: 600; }
+.depense { color: var(--rouge); font-weight: 600; }
+
+/* Messages d'erreur */
+#messageErreur { margin-top: 12px; font-weight: 600; }
+
+/* Petits écrans */
+@media (max-width: 640px) {
+    table { display: block; overflow-x: auto; }
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>BudgetEtu - Inscription</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>BudgetEtu</h1>
+    <h2>Créer un compte</h2>
+
+    <form id="formRegister">
+        <input type="text" id="nom" placeholder="Nom" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="motPasse" placeholder="Mot de passe" required>
+        <button type="submit">S'inscrire</button>
+    </form>
+
+    <p id="messageErreur" style="color: red; display: none;"></p>
+
+    <p>Déjà un compte ? <a href="login.html">Se connecter</a></p>
+
+    <script>
+        const API_URL = "http://localhost:8080/api/auth/register";
+
+        document.getElementById("formRegister").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const nouvelUtilisateur = {
+                nom: document.getElementById("nom").value,
+                email: document.getElementById("email").value,
+                motPasse: document.getElementById("motPasse").value
+            };
+
+            const reponse = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(nouvelUtilisateur)
+            });
+
+            const message = document.getElementById("messageErreur");
+
+            if (reponse.status === 200) {
+                window.location.href = "login.html";
+            } else if (reponse.status === 409) {
+                message.textContent = "Cet email est déjà utilisé.";
+                message.style.display = "block";
+            } else {
+                message.textContent = "Une erreur est survenue, réessaie plus tard.";
+                message.style.display = "block";
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -2,8 +2,11 @@ package com.budget.gestion_budget.controller;
 
 import com.budget.gestion_budget.UtilisateurDAO;
 import com.budget.gestion_budget.model.Utilisateur;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 
@@ -29,5 +32,15 @@ public class AuthController {
         }
 
         return ResponseEntity.ok(resultats.get(0));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody Utilisateur nouvelUtilisateur) {
+        try {
+            utilisateurDAO.creerUtilisateur(nouvelUtilisateur);
+            return ResponseEntity.ok("Compte créé");
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(409).body("Cet email est déjà utilisé");
+        }
     }
 }

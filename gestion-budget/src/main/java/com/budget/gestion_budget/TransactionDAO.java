@@ -39,6 +39,11 @@ public class TransactionDAO {
         return jdbcTemplate.query(sql, transactionRowMapper);
     }
 
+    public List<Transaction> listerTransactionsParUtilisateur(int idUtilisateur) {
+        String sql = "SELECT * FROM transaction WHERE id_utilisateur = ? ORDER BY date DESC";
+        return jdbcTemplate.query(sql, transactionRowMapper, idUtilisateur);
+    }
+
     public void ajouterTransaction(Transaction t) {
         String sql = "INSERT INTO transaction (montant, date, description, type, id_utilisateur, id_categorie) VALUES (?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, t.getMontant(), t.getDate(), t.getDescription(), t.getType(), t.getIdUtilisateur(), t.getIdCategorie());
